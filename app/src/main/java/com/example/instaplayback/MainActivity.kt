@@ -16,11 +16,11 @@ import androidx.core.content.ContextCompat
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val CAMERA_PERMISSION_CODE = 100
         private const val STORAGE_PERMISSION_CODE = 101
+        private const val AUDIO_PERMISSION_CODE=225
     }
 
-    var isRecording = true
+    var isRecording = false
     var am: AudioManager? = null
     var record: AudioRecord? = null
     var track: AudioTrack? = null
@@ -54,8 +54,6 @@ class MainActivity : AppCompatActivity() {
 
             // Requesting the permission
             ActivityCompat.requestPermissions(this@MainActivity, arrayOf(permission), requestCode)
-        } else {
-            Toast.makeText(this@MainActivity, "Permission already granted", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -66,17 +64,11 @@ class MainActivity : AppCompatActivity() {
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_CODE) {
+        if (requestCode ==AUDIO_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this@MainActivity, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Audio Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this@MainActivity, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
-            }
-        } else if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this@MainActivity, "Storage Permission Granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this@MainActivity, "Storage Permission Denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "Audio Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -119,11 +111,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun recordAndPlay() {
         val lin = ShortArray(1024)
-        var num = 0
         am!!.mode = AudioManager.MODE_IN_COMMUNICATION
         while (true) {
             if (isRecording) {
-                num = record!!.read(lin, 0, 1024)
+                var num = record!!.read(lin, 0, 1024)
                 track!!.write(lin, 0, num)
             }
         }
